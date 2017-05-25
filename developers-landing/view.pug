@@ -4,17 +4,20 @@ block content
     section.hero.is-dark.is-bold.is-medium
         .hero-body
             .container
-                h1.title= title
-                h2.subtitle= subtitle
+                h1.title.is-1= title
+                h2.subtitle.is-3= subtitle
                 
     ul.container(style={'padding-top': '20px'})
         each developer in developers
-            article.media
-                figure.media-left
-                    p.image.is-128x128
-                        img(src= developer.image)
-                .media-content
-                    .content(style={'padding-top': '20px'})
-                        h3.title.is-3= developer.name
-                        p.subtitle= 'Favorite Language: ' + developer.favoriteLanguage
+            a(href="/developers/"+developer.id)
+                article.media(style={'padding': '20px'})
+                    figure.media-left
+                        p.image.is-128x128.is-hidden-mobile
+                            img(src= developer.image)
+                        p.image.is-64x64.is-hidden-tablet
+                            img(src= developer.image)
+                    .media-content
+                        .content
+                            h3.title.is-3= developer.name
+                            p.subtitle= 'Favorite Language: ' + developer.favoriteLanguage
             
