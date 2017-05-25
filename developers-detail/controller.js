@@ -1,4 +1,5 @@
 var developersHelper = require('../helpers/developers');
+var model = require('./model');
 
 module.exports = function(req, res){
 
@@ -6,6 +7,5 @@ module.exports = function(req, res){
 
     var developer = developersHelper.getDeveloperById(developerId);
 
-    res.send(`Developer ${developer.name}`);
-
+    res.render('developers-detail/view', model(developer));
 };

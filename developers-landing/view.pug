@@ -1,0 +1,20 @@
+extends ../index.pug
+
+block content
+    section.hero.is-dark.is-bold.is-medium
+        .hero-body
+            .container
+                h1.title= title
+                h2.subtitle= subtitle
+                
+    ul.container(style={'padding-top': '20px'})
+        each developer in developers
+            article.media
+                figure.media-left
+                    p.image.is-128x128
+                        img(src='http://bulma.io/images/placeholders/128x128.png')
+                .media-content
+                    .content(style={'padding-top': '20px'})
+                        h3.title.is-3= developer.name
+                        p.subtitle= 'Favorite Language: ' + developer.favoriteLanguage
+            
