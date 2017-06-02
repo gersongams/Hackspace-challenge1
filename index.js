@@ -6,31 +6,35 @@ var server = require('http').Server(app);
 var port = process.env.PORT || 3000;
 
 var io = require('socket.io')(server);
+var Vue = require('vue');
+
 
 server.listen(port, function () {
     console.log("Listening on *:" + port);
 });
 
+app.use(express.static(__dirname));
+
+
 var developersLanding = require('./developers-landing'),
-    developersDetail = require('./developers-detail');
+    developersDetail = require('./developers-detail'),
+    chatDetail = require('./chat-detail');
 
 app.set('views', '.');
 app.set('view engine', 'pug');
 
-app.use(express.static(__dirname));
-
-app.get('/chat', function(request,response) {
-    response.sendFile(__dirname + '/chat.html');
-});
-
 app.get('/', function(req, res) {
-
     res.redirect('/developers');
-
 });
 
 app.get('/developers', developersLanding.controller);
 app.get('/developers/:developerId', developersDetail.controller);
+app.get('/chat', chatDetail.controller);
+
+app.get('/onlineusers', function(request,response) {
+    //console.log(io.sockets.adapter.rooms);
+    response.send(io.sockets.adapter.rooms);
+});
 
 io.on('connection', function (socket) {
     console.log('A user connected:' + socket.id);

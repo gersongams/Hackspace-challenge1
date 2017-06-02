@@ -2,8 +2,8 @@
     width: 100%;
 }
 .userlist {
-   overflow-y: scroll;
-    height: 800px;
+    overflow-y: scroll;
+    height: 100vh;
     border: 1px solid dimgray;
 }
 .info {
@@ -50,7 +50,11 @@
 .panel-body
 {
     overflow-y: scroll;
-    height: 700px;
+    height: 80vh;
+}
+
+.total-panel {
+    height: 80vh;
 }
 
 ::-webkit-scrollbar-track

@@ -1,9 +1,6 @@
 extends ../index.pug
 
-
 block content
-
-
     .columns
         .column.is-3.aside.hero.is-fullheight.is-warning.is-hidden-mobile
             section.hero.is-bold.is-warning
@@ -11,16 +8,19 @@ block content
                     .container.has-text-centered
                         h2.subtitle.is-3= "Team"
             developer-tile( v-for="dev in developers"
-                                v-bind:developer="dev" )
+                            v-bind:developer="dev" style={"margin": "5px 30px"})
         .column.is-9
             section.hero.is-warning.is-bold
                 .hero-body
                     .container
-                        h1.title.is-1= staticContent.title
+                        .columns
+                            .column.is-three-quarters
+                                h1.title.is-1= staticContent.title
+                            .column
+                                a.button.is-large.is-dark.is-outlined.is(href="/chat")
+                                    span= "Go Chat"
+                                    i.fa.fa-arrow-right(style={"padding-right": "10px"})
                         h2.subtitle.is-3= staticContent.subtitle
-                        a.button.is-large.is-dark.is-outlined.is(href="/chat")
-                            i.fa.fa-arrow-left(style={"padding-right": "10px"})
-                            span= "Go Chat"
 
             .columns
                 .column.is-one-quarter
@@ -38,7 +38,6 @@ block content
 
             script(type="text/x-template" id="developerTileTemplate")
                 include views/developer-tile.pug
-
 
 block scripts
     script(type="text/javascript").

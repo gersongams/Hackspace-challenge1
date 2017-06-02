@@ -1,0 +1,158 @@
+extends ../index.pug
+
+
+block content
+
+    .columns
+        .column.is-3.aside.hero.is-fullheight.is-warning.is-hidden-mobile
+            section.hero.is-bold.is-warning
+                .hero-body
+                    .container.has-text-centered
+                        h2.subtitle.is-3= "Online ({{ connectedUsers.length }})"
+                ul.chat
+                            li(v-for="user in connectedUsers")
+                                h4.subtitle.is-3= "({{ user }})"
+
+        .column.is-9.is-fullheight
+            section.hero.is-warning.is-bold
+                .hero-body
+                    .container
+                        .columns
+                            .column.is-three-quarters
+                                h1.title.is-1= staticContent.title
+                            .column
+                                a.button.is-large.is-dark.is-outlined.is(href="/")
+                                    i.fa.fa-arrow-left(style={"padding-right": "10px"})
+                                    span= "Go back"
+                            
+            #livechat-container
+                .panel.panel-primary
+                    .panel-body
+                        ul.chat(id="messages")
+                            li.left.clearfix(v-for="message in messages")
+                                .info(v-if="message.type == 'info'")
+                                    span= "{{ message.msg }}"
+                                div(v-if="message.type == 'chat'")
+                                    span.chat-img.pull-left
+                                        img.image-circle(src="http://placehold.it/50/55C1E7/fff&text=U" alt="User Avatar")
+                                    .chat-body.clearfix
+                                        .header
+                                            strong.primary-font= "{{  message.user }}"
+                                            small.pull-right.text-muted
+                                                span.glyphicon.glyphicon-time
+                                                    span= "{{ message.timestamp }}"
+                                        p= "{{ message.text }}"
+                    
+                    .panel-footer
+                        form(@submit.prevent="send")
+                            input(v-model="message.text" v-on:keyup="usersAreTyping" v-on:keyup.13="stoppedTyping('13')" v-on:keyup.8="stoppedTyping('8')" type="text" class="form-control input-lg" placeholder="Type chat here")
+
+
+
+block scripts
+    script(type="text/javascript").
+
+        var socket = io();
+
+        new Vue({
+            el: '#app',
+            data: 
+                {
+                connectedUsers: [],
+                messages: [],
+                message: {
+                    "type": "",
+                    "action": "",
+                    "user": "",
+                    "text": "",
+                    "timestamp": ""
+                },
+                areTyping: []
+            },
+            created: function () {
+                //if server emits 'user joined', update connectedUsers array
+                socket.on('user joined', function (socketId) {
+
+                    // get already connected users first
+                    axios.get('/onlineusers')
+                        .then(function (response) {
+                            for(var key in response.data) {
+                                if(this.connectedUsers.indexOf(key) <= -1) {
+                                    this.connectedUsers.push(key);
+                                }
+                            }
+                            console.log(this.connectedUsers);
+                        }.bind(this));
+                    var infoMsg = {
+                        "type": "info",
+                        "msg": "User " + socketId + " has joined"
+                    }
+                    this.messages.push(infoMsg);
+                }.bind(this));
+
+                // if server emits 'chat.message', update messages array
+                socket.on('chat.message', function (message) {
+                    this.messages.push(message);
+                }.bind(this));
+
+                // server emits 'user typing'
+                socket.on('user typing', function (username) {
+                    this.areTyping.push(username);
+                }.bind(this));
+
+            //server emits 'stopped typing'
+            socket.on('stopped typing', function (username) {
+                var index = this.areTyping.indexOf(username);
+                if(index >= 0) {
+                    this.areTyping.splice(index,1);
+                }
+            }.bind(this));
+
+                //if server broadcasts 'user left', remove leaving user from connectedUsers array
+                socket.on('user left', function (socketId) {
+                    var index = this.connectedUsers.indexOf(socketId);
+                    if(index >= 0) {
+                        this.connectedUsers.splice(index,1);
+                    }
+                    var infoMsg = {
+                        "type": "info",
+                        "msg": "User " + socketId + " has left"
+                    }
+                    this.messages.push(infoMsg);
+                }.bind(this));
+            },
+            methods: {
+                send: function () {
+                    this.message.type = "chat";
+                    this.message.user = socket.id;
+                    this.message.timestamp = moment().calendar();
+                    socket.emit('chat.message', this.message);
+                    this.message.type = '';
+                    this.message.user = '';
+                    this.message.text = '';
+                    this.message.timestamp = '';
+
+                },
+                userIsTyping: function (username) {
+                    if(this.areTyping.indexOf(username) >= 0) {
+                    return true; 
+                    }
+                    return false;
+                },
+                usersAreTyping: function () {
+                    if(this.areTyping.indexOf(socket.id) <= -1) {
+                        this.areTyping.push(socket.id);
+                        socket.emit('user typing', socket.id);
+                    }
+                },
+                stoppedTyping: function (keycode) {
+                    if(keycode == '13' || (keycode == '8' && this.message.text == '')) {
+                        var index = this.areTyping.indexOf(socket.id);
+                        if (index >= 0) {
+                            this.areTyping.splice(index,1);
+                            socket.emit('stopped typing', socket.id);
+                        }
+                    }
+                }
+            }
+        });
