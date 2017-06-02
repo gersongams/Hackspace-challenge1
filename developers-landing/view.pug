@@ -1,23 +1,64 @@
 extends ../index.pug
 
+
 block content
-    section.hero.is-dark.is-bold.is-medium
-        .hero-body
-            .container
-                h1.title.is-1= title
-                h2.subtitle.is-3= subtitle
-                
-    ul.container(style={'padding-top': '20px'})
-        each developer in developers
-            a(href="/developers/"+developer.id)
-                article.media(style={'padding': '20px'})
-                    figure.media-left
-                        p.image.is-128x128.is-hidden-mobile
-                            img(src= developer.image)
-                        p.image.is-64x64.is-hidden-tablet
-                            img(src= developer.image)
-                    .media-content
-                        .content
-                            h3.title.is-3= developer.name
-                            p.subtitle= 'Favorite Language: ' + developer.favoriteLanguage
-            
+
+
+    .columns
+        .column.is-3.aside.hero.is-fullheight.is-warning.is-hidden-mobile
+            section.hero.is-bold.is-warning
+                .hero-body
+                    .container.has-text-centered
+                        h2.subtitle.is-3= "Team"
+            developer-tile( v-for="dev in developers"
+                                v-bind:developer="dev" )
+        .column.is-9
+            section.hero.is-warning.is-bold
+                .hero-body
+                    .container
+                        h1.title.is-1= staticContent.title
+                        h2.subtitle.is-3= staticContent.subtitle
+                        a.button.is-large.is-dark.is-outlined.is(href="/developers")
+                            i.fa.fa-arrow-left(style={"padding-right": "10px"})
+                            span= "Go Chat"
+
+            .columns
+                .column.is-one-quarter
+                    developer-tile( v-for="dev in developers"
+                                v-bind:developer="dev" )
+                .column.is-one-quarter
+                    developer-tile( v-for="dev in developers"
+                                v-bind:developer="dev" )
+                .column.is-one-quarter
+                    developer-tile( v-for="dev in developers"
+                                v-bind:developer="dev" )
+                .column.is-one-quarter
+                    developer-tile( v-for="dev in developers"
+                                v-bind:developer="dev" )
+
+            script(type="text/x-template" id="developerTileTemplate")
+                include views/developer-tile.pug
+
+
+block scripts
+    script(type="text/javascript").
+
+        Vue.component('developerTile', {
+
+            template: '#developerTileTemplate',
+
+            props: ['developer']
+
+        });
+
+        var vm = new Vue({
+
+            el: '#app',
+
+            data: !{data},
+
+            created: function(){
+                console.log('Received ' + this.developers.length + ' developers.');
+            }
+
+        });

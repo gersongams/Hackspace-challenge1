@@ -1,8 +1,29 @@
 extends ../index.pug
 
 block content
-    section.hero.is-dark.is-bold.is-medium
+
+
+    section.hero.is-warning.is-bold
         .hero-body
             .container
-                h1.title= developer.name
-                h2.subtitle= developer.favoriteLanguage
+                h1.title.is-1= staticContent.developer.firstName + " " + staticContent.developer.lastName
+                h2.subtitle.is-3= staticContent.developer.title
+
+    section.hero    
+        .hero-body
+
+            .container
+                article.media(style={'margin-bottom': '20px'})
+                    figure.media-left.card-image.is-3by4
+                        img(src='http://bulma.io/images/placeholders/128x128.png')
+                h3.subtitle.is-4!= staticContent.developer.bio
+                hr
+                ul.subtitle.is-4
+                    each fact in staticContent.developer.facts
+                        li!= fact
+                        hr
+
+
+                a.button.is-large.is-dark.is-expanded.is-outlined(href="/developers")
+                    i.fa.fa-arrow-left(style={"padding-right": "10px"})
+                    span= "Developers"

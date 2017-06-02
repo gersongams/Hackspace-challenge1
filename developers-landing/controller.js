@@ -1,14 +1,25 @@
 var developersHelper = require('../helpers/developers');
 var model = require('./model');
 
-
 module.exports = function(req, res) {
 
-    var developers = developersHelper.getAllDevelopers();
+    developersHelper.getAllDevelopers().then(function(developers) {
 
-    res.render('developers-landing/view',model(
-        'Developers',
-        'Look at these nerds.',
-        developers
-    ));
+        var staticContent = {
+            title: 'Hackspace',
+            subtitle: 'Batch 2017.',
+            app: {
+                title: 'Hackspace'
+            }
+        };
+
+        var data = {
+            developers: developers
+        };
+
+        res.render('developers-landing/view', model(staticContent,
+            data));
+
+    })
+
 };

@@ -1,9 +1,15 @@
-module.exports = function( title, subtitle, developers){
+
+module.exports = function(staticContent, data) {
 
     return {
-        title: title || 'Developers',
-        subtitle: subtitle || 'Look at these nerds',
-        developers: developers || []
+        staticContent: staticContent || {
+            title: '',
+            subtitle: '',
+            app: {}
+        },
+        data: JSON.stringify(data || {
+            developers: []
+        })
     };
 
 };
