@@ -17,6 +17,12 @@ var developersLanding = require('./developers-landing'),
 app.set('views', '.');
 app.set('view engine', 'pug');
 
+app.use(express.static(__dirname));
+
+app.get('/chat', function(request,response) {
+    response.sendFile(__dirname + '/chat.html');
+});
+
 app.get('/', function(req, res) {
 
     res.redirect('/developers');
@@ -24,7 +30,6 @@ app.get('/', function(req, res) {
 });
 
 app.get('/developers', developersLanding.controller);
-
 app.get('/developers/:developerId', developersDetail.controller);
 
 io.on('connection', function (socket) {
