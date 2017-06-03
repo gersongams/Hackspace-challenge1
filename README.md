@@ -10,9 +10,12 @@ A webpage using:
 
 ### Local Development
 
-1. __npm install__ - installs dependencies
-2. __npm run dev__ - runs server, watches for file changes
-
+```bash
+# installs dependencies
+$ npm install
+# runs server, watches for file changes
+$ npm run dev 
+```
 ## Author
 
 * [@gersongams](https://github.com/gersongams)
